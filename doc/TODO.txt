@@ -1,0 +1,70 @@
+---------------------------------------------------------------------------------------------------------
+PREREQUISITES:
+- Haskell Platform
+- Stack: solutie cross-platform pentru dezvoltarea de aplicatii Haskell. In mare populeaza un folder
+	cu fisiere stack.yaml si metadate *.cabal.
+- Cabal: solutie pentru build si package a librariilor Haskell. Folosesti o librarie o builduiesti cu el
+	scrii una o impachetezi cu el .. si stack pregateste prin fisierele generate o astfel de aplicatie
+- distributed-process si network-transport-tcp librarii de la Cloud Haskell Platform
+
+---------------------------------------------------------------------------------------------------------
+
+CONSTRUIREA LIBRARIILOR:
+- descarcam si instalam cabal
+	in cmd cabal --version
+- descarcam si dezarhivam librariile distributed-process si network-transport-tcp 
+	mergem in folderul fiecareia si scriem 
+	cabal install *.cabal
+	copyem ce e in dist
+	
+---------------------------------------------------------------------------------------------------------
+
+CONSTRUIREA PROIECTULUI:
+- descarcam si instalam stack. In mare parte e o solutie pentru dezvoltarea de aplicatii Haskell. 
+Populeaza un folder	cu fisiere stack.yaml si metadate *.cabal. Creaza un template pentur o librarie.
+	in cmd stack --version
+- cd D
+- mkdir Example
+- cd Example
+- stack new DistrAppHask
+- mutam fisierele create de cabal in folderul asta / app
+
+---------------------------------------------------------------------------------------------------------
+
+CREAREA UNUI NOD:
+- un proces haskell traieste intr-un nod si trebuie intializat cu un ip si port pentru a putea fi pornit
+- mai are nevoie de un asa zic remote table care are rolul de separa nodurile si de a identifica procesele in sistem
+- importurile necesare:
+ 
+import Network.Transport.TCP (createTransport, defaultTCPParameters)
+import Control.Distributed.Process
+import Control.Distributed.Process.Node
+
+-TCP network are nevoie de IP si port si de alocarea in remote table:
+
+main :: IO ()
+main = do
+  Right t <- createTransport "127.0.0.1" "10501" defaultTCPParameters
+  node <- newLocalNode t initRemoteTable
+
+---------------------------------------------------------------------------------------------------------
+
+TRIMITEREA DE MESAJE:
+- pornim un nou proces prin apelarea lui runProcess care primeste un node, cel creat anterior
+	si un proces pe care il va executa. Fiecare proces are un identificator asociat si poate fi folosit
+	pentru a trimite mesaje unui proecs care ruleaza
+- de asemenea fiecare proces are si un mailbox asociat. Mesajele pe care noi le trimitem se aseaza frumos
+	in sir indian in acest mailbox. Un proces poate sa scoata mesaje din acest mailbox apeland expect sau receive.
+- de asemeanea daca nu exista un mesaj in mailbox, procesul va astepta pana primeste unul.
+- folosim receiveWait pentru a primi mesaje. receiveWait si functii similare ofera capabilitati de procesare
+	a mesajelor. primitiva match ne permite sa construim un potential message handler, o functie 
+	pe care sa o apelam atunci cand primim un mesaj
+- serverul echo printeaza mesajul pe care il primeste. Daca primul mesaj primit nu e string evalueaza unul nou,
+	de aceea avel tuplul t :: (ProcessId, String) care va trimite componenta String care expeditorul ProcessID.
+
+---------------------------------------------------------------------------------------------------------
+
+DATE SERIALIZABILE:
+
+
+---------------------------------------------------------------------------------------------------------
