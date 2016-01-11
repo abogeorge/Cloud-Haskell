@@ -6,4 +6,8 @@
 --------
 #### Prerequisites
 * Working Haskell environment (https://www.haskell.org/downloads)
-* stack, a popular build tool for Haskell projects(https://github.com/commercialhaskell/stack/wiki/Downloads)
+* Due to the fact that this project contains already built libraries for distributed-process and network-transport-tcp there is no need for extra software. If the user wishes to separetly build these libraries stack and cabal will need to be provided.
+
+#### Runing the code
+* Load the \CloudHaskell\FirstEx\app\Main.hs file into ghci and type main
+* Load the \CloudHaskell\PingPong\pingpong.hs file into ghci and type main
